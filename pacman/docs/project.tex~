@@ -1,0 +1,349 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyvrb}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{courier}
+\usepackage{hyperref}
+\usepackage{color}
+% \DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\small}
+\DefineVerbatimEnvironment{example}{Verbatim}{fontsize=\small}
+\def\ti#1{\textit{#1}}
+\newcounter{snippetno} % make new counter for counting number of snipppets
+% \
+\setcounter{snippetno}{0} % initalize by default to 1
+
+\newcommand{\snippet}{%
+\addtocounter{snippetno}{1}%
+\paragraph{Snippet \arabic{snippetno}}}
+% \footnote{Play Online:\url{https://www.google.com/doodles/30th-anniversary-of-pac-man}}
+%opening
+\title{Project: CP's PACMAN\footnote{Play Online:\url{https://www.google.com/doodles/30th-anniversary-of-pac-man}}\footnote{Complete set of instruction on how to build it can be found here: \url{http://gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior} }}
+\author{Sibt ul Hussain}
+\usepackage{enumitem}
+
+\usepackage{upquote,textcomp}
+\usepackage{minted}
+\include{definitions}
+\newminted{cpp}{linenos,
+               numbersep=8pt,
+               frame=lines,
+               framesep=2mm,
+               bgcolor=bg}
+\newminted{bash}{linenos,
+               numbersep=8pt,
+               frame=lines,
+               framesep=2mm,
+               bgcolor=bg}
+\newmint{bash}{linenos,
+ 	       baselinestretch=0.5,
+               numbersep=8pt,
+               frame=lines,
+%                framerule=0.05pt,
+               framesep=2mm,
+               bgcolor=bg}
+\newmint{cpp}{linenos,
+               numbersep=8pt,
+               frame=lines,
+               framesep=2mm,
+               bgcolor=bg}  
+\newcommand{\ic}[1]{{\tt{#1}}}
+\begin{document}
+% \newcommand\upquote[1]{\textquotesingle#1\textquotesingle}
+
+% \begin{document}
+
+\maketitle
+
+% \begin{abstract}
+
+% \end{abstract}
+\small{\color{red}{\textbf{Design Deadline}} (Class Diagrams + Drawing): May 16, 2014 before 23h30 \\
+\ \ \textbf{Deadline:} May 13, 2014 before 23h30 \\}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{./figures/pacman.png} 
+\end{center}
+
+\textbf{Attention}
+\begin{itemize}
+\item Make sure that you read and understand each and every instruction. If you have any questions or comments you are encouraged to discuss your problems with your colleagues (and instructors) on Piazza.
+
+\item {\color{red} Plagiarism is strongly forbidden and will be very strongly punished. If we find that you have copied from someone else or someone else has copied from you (with or without your knowledge) both of you will be punished. You will be awarded (straight zero in the project --- which can eventually result in your failure) and appropriate action as recommended by the Disciplinary Committee (DC can even award a straight F in the subject) will be taken.}
+\item  \textbf{Try to understand and do the project yourself even if you are not able to complete the project. Note that you will be mainly awarded on your effort not on the basis whether you have completed the project or not.}
+\item Divide and conquer: since you have around 10 days so you are recommended to divide the complete task in manageable subtasks. We recommend to complete the drawing and design (\ie number of classes and their relationships) phase as quickly as possible and then focus on the intelligence phase.
+
+\item \textbf{\color{blue} Before writing even one line of code, you must design your final project. This process will  require you to break down and outline your program into classes, design your data structure(s), clarify the major functionality of your program, and pseudocode important methods. After 
+designing your program, you will find that writing the program is a much simpler process.}
+\item \textbf{\color{red} No Marks will be given if you do not submit your class diagram and if you do not use the object oriented design principles you have learned during the course.}
+\item \textit{Imagination Powers: Use your imaginative powers to make this as interesting and appealing as you can think of. An excellent solution can get you bonus marks}
+%   
+%   \item 
+\end{itemize}
+
+
+\paragraph{Goals:} In this project you will build a 2D game (CP's PACMAN -- see \figref{example}) using the techniques learned during the course. The major goal of this project is to consolidate the things you have learned during the course. In this respect it is requested to 
+\begin{figure}[htb]
+\centering
+ \includegraphics[width=0.5\textwidth]{figures/pacman-shot.png}
+  \caption{A screen shot of the game.}
+  \label{figure:example}
+\end{figure}
+
+\section{Instructions}
+We provide complete skeleton with all the basic drawing functions (can be located in util.h and util.cpp) needed in project with detailed instructions and documentation. In other words all you need to know for building the game is provided. Your main task will be to understand the main design of game and implement it. Complete set of instructions on how to build the pacman are given on following url: \url{http://gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior} (the webpage is included for offline viewing) However, before proceeding with code writing you will need to install some required libraries.
+\subsection{Installing libraries on Linux (Ubuntu)}
+You can install libraries either from the Ubuntu software center or from command line. We recommend command line and provide the file ``install-libraries.sh'' to automate the complete installation procedure. To install libraries:
+\begin{enumerate}
+  \item Simply run the terminal and go to directory which contains the file downloaded file ``install-libraries.sh''.
+ \item Run the command \\
+\bash/bash install-libraries.sh/
+% \end{minted}
+ \item Provide the password and wait for the libraries to be installed. If you get an error that libglew1.6-dev cannot be found, try installing an older version, such as libglew1.5-dev by issuing following  on command line
+ \\ \bash/sudo apt-get install libglew1.5-dev/%\bashcode{sudo apt-get install libglew1.5-dev} . Also make sure that your package manager is up to date.
+% \end{minted}
+\item If you have any other flavour of Linux. You can follow similar procedure to install  ``OpenGL'' libraries.
+
+\end{enumerate}
+\subsection{Compiling and Executing}
+To compile the game (skeleton) each time you will be using ``g++''. However to automate the compilation and linking process we use a program ``make''. Make takes as an input a file containing the names of files to compile and libraries to link. This file is named as ``Makefile'' in the game folder and contains the detail of all the libraries that game uses and need to linked. 
+
+So each time you need to compile and link your program (game) you will be simply calling the ``make'' utility in the game directory on the terminal to perform the compilation and linking. \\
+\bash/make/ \\
+That's it if there are no errors you will have your game executable (on running you will see three shapes on your screen). Otherwise try to remove the pointed syntax errors 
+and repeat the make procedure.
+\subsection{Drawing Board and Shapes}
+\paragraph{Canvas}
+Since we will be building 2D games, our first step towards building any game will be to define a canvas (our 2D world or 2D coordinate space in number of horizontal and vertical pixels) for drawing the game objects (in our case ball, board and bricks).  For defining the canvas size you will be using (calling) the function ``SetCanvas'' (see below) and providing two parameters to set the drawing-world width and height in pixels.  
+\begin{figure}[htb]
+\begin{cppcode}
+ /* Function sets canvas size (drawing area) in pixels...
+ *  that is what dimensions (x and y) your game will have
+ *  Note that the bottom-left coordinate has value (0,0)
+ *  and top-right coordinate has value (width-1,height-1).
+ *  To draw any object you will need to specify its location
+ * */
+void SetCanvasSize(int width, int height) 
+\end{cppcode}
+\end{figure}
+\begin{figure}[ht!]
+ \begin{cppcode}
+ // Drawing functions provided in the skeleton code
+
+ /* To draw a triangle we need three vertices with each 
+ *  vertex having 2-coordinates [x, y] and a color for the 
+ *  triangle.
+ *  This function takes 4 arguments first three arguments
+ *  (3 vertices + 1 color) to draw the triangle with the 
+ *  given color.
+ * */
+void DrawTriangle(int x1, int y1, int x2, int y2, int x3, 
+	  int y3,float color[]/*three
+		component color vector*/)
+		
+// Function draws a circle of given radius and color at the
+// given point location (sx,sy).
+void DrawCircle(float x, float y, float radius, 
+                float*color);
+
+// Function draws a circular curve of given radius
+void Torus2d(int x /*Starting position x*/, 
+	int y /*Starting position Y*/,
+	float angle, // starting angle in degrees
+	float length, // length of arc in degrees, >0
+	float radius, // inner radius, >0
+	float width,  // width of torus, >0
+	unsigned int samples=60,// number of circle samples, >=3
+	float *color = NULL);
+
+// Function draws a line between point P1(x1,y1) and P2(x2,y2)
+// of given width and colour
+void DrawLine(int x1, int y1, int x2, int y2, 
+	    int lwidth = 3, float *color =NULL);
+
+// Function draws a rectangle with rounded corners
+at given x,y coordinates
+void DrawRoundRect(float x, float y, float width, 
+		float height,
+		float* color = 0, 
+		float radius = 0.0/*corner radius*/);
+
+// Function draws a string at given x,y coordinates
+void DrawString(int x, int y, const string& str, 
+	float * color = NULL);
+		
+\end{cppcode}
+\caption{ A set of functions for drawing primitive shapes.} \label{figure:fun-code}
+\end{figure}
+\paragraph{Drawing Primitives} Once we have defined the canvas our next goal will be to draw the game board and its characters using basic drawing primitives. For drawing each object we will need to specify its constituent point's locations (x \& y coordinates) in 2D canvas space  and its size.  You will only need lines, circles, curves (toruses), rounded rectangles and triangles as drawing primitives to draw the complete board, pacman and ghosts. 
+
+For this purpose, skeleton code already include functions for drawing lines, circles, curves, rounded rectangles (see below), traingles at specified location. 
+
+Recall that a line needs two vertices (points) where as a triangle needs three vertices so to draw these primitives we will need to provide these vertices (points) locations along with shape's color -- \cf \figref{fun-code}. Skeleton already provides a list of $\approx$ 140 colors which can be used for coloring different shapes -- note that each color is combinations of three individual components red, green and blue.
+
+\paragraph{Drawing Board}
+Initially it might seem drawing and managing the board is extremely difficult however this difficulty can be overcome using a very simple trick of divide and conquer. The trick revolve around the idea of the board being split into tiles. ``Tile'' or ``cell'' in this context refers to an $8 \times 8$ -- you can use any tile size as you wish --  pixel square on the screen. PacMan’s screen resolution is $224 \times 288$, so this gives us a total board size of $28 x 36$ tiles. Since we will be working independent of pixel units, so we can define tile size in our coordinates units, for instance we can divide the board in $8\times8$\footnote{use variables to store the tile size} units -- \cf \figref{pacman-grid}. So drawing and managing the board will require these two steps:
+\begin{enumerate}
+ \item Splitting the board in tiles.
+ \item Finding and storing what shape to draw in each tile.
+\end{enumerate}
+\begin{figure}[ht!]
+ \centering
+ \includegraphics[width=0.5\textwidth]{figures/pacman-grid.png}
+  \caption{Pacman board divdided into grids. Note that once we have divided the board into a grid we can build a 2D table in which we can record the contents of each tile, \ie what shape it contains and at what location. Given the contents table we can loop over this table and draw the complete board }
+  \label{figure:pacman-grid}
+\end{figure}
+
+Once we have divided the boards into tiles our job reduces to finding what lies in each tile \ie what primitive shape we need to draw in each tile. We can record this information in an offline table and then can loop over this table to draw each primitive. We can further simplify our task by defining an \ic{enum} environment to assign constant names (integers) to these primitives and then build table of these primitives. \figref{pacman-board} shows an example on how can we draw some part of the board using a 2D offline table. Complete code can be found in the skeleton.
+\begin{figure}[ht!]
+\begin{cppcode}
+// A simple example of board
+enum BoardParts {
+	NILL, // Prohibitive Empty space
+	TLC, // Left corner top
+	TRC, //Right corner top
+	BLC, // Left corner bottom
+	BRC, //Right corner bottom
+	HL, // Horizontal line
+	VL, // Vertical line
+	PEBB, // Pebbles
+}; 
+const int BOARD_X = 10;
+const int BOARD_Y = 5;
+static int board_array[BOARD_Y][BOARD_X] = {
+{ PEBB, PEBB, PEBB, BRC, BLC, PEBB, VL, VL, PEBB, PEBB},
+{ PEBB, PEBB, PEBB, VL, VL, PEBB, PEBB, PEBB, PEBB, PEBB },
+{ PEBB, PEBB, PEBB, VL, VL, PEBB, PEBB, PEBB, PEBB, PEBB }, 
+{ BRC, HL, HL, TLC, TRC, HL, HL, HL, HL, BLC }, 
+{ TRC, HL, HL, HL, HL, HL, HL, HL, HL, TLC } };
+\end{cppcode}
+\caption{Example code for generating some section of the board.}\label{figure:pacman-board}
+\end{figure}
+
+Following similar lines you can draw the complete board. Note that your system must follow object oriented design principles.
+
+
+
+Remember that you can do your drawing only in the \texttt{Display()} function, that is only those objects will be drawn on the canvas that are mentioned inside the Display function. This \texttt{Display} function is automatically called by the graphics library whenever the contents of the canvas (window) will need to be drawn \ie when the window is initially opened, and likely when the window is raised above other windows and previously obscured areas are exposed, or when \texttt{glutPostRedisplay()} is explicitly called. 
+
+In short, \texttt{Display} function is called automatically by the library and all the things inside it are drawn. However whenever you need to redraw the canvas you can explicitly call the Display() function by calling the function \texttt{glutPostRedisplay()}. {\ti{ For instance, you will calling the \texttt{Display} function whenever you wanted to animate (move) your objects; where first you will set the new positions of your objects and then call the \texttt{glutPostRedisplay()} to redraw the objects at their new positions. Also see the documentation of  \texttt{Timer} function}.
+
+
+% To complete the drawing phase of your game you will have to define two major functions \texttt{DrawRectangle()} (to draw bricks and board) and \texttt{DrawCircle} (to draw ball). Both of these shapes will be drawn using triangles primitives. Now you have to think how to draw a rectangle and circle using triangles. Recall a rectangle in 2D can be specified by two vertices representing its lower-left-corner and top-right-corner -- see \figref{rectangle-circle}), so your DrawRectangle must take as input position of two vertices and rectangle colour and must draw the rectangle (using triangles) at specified position. In comparison, for drawing a circle we need to know its center point (a single vertex $(x_c,y_c)$) and its radius. For drawing circle you will need to use multiple triangles and consequently to draw these triangles you will need to the location of vertices. [Hint: From trigonometry, we know that  position of any point $P_c$ on the circle boundary can be give by this simple relation, \ie $P_c=(r\cos\
+% theta,r\sin\theta)$].
+% \begin{figure}[htb]
+% \centering
+%  \includegraphics[width=\textwidth]{figures/rectangle-circle.pdf}
+%   \caption{Representation of a rectangle and a circle. A rectangle can be represented using two vertices (given by $(x_1,y_1)$ and $(x_2,y_2)$) representing its lower-left-corner and top-right-corner. A circle can be represented by its center point ($x_c,y_c$) and radius $r$.}
+%   \label{figure:rectangle-circle}
+% \end{figure}
+% 
+% 
+% Note that when drawing  a particular object you will need to record its position, size and other necessary properties, \eg for each  brick you will need to record its visibility property (\ie whether a brick is visible or not). Similarly you will need to record the displacement properties of ball (how much to move ball in x and y directions in each second)  and board.
+
+\subsection{Interaction With Game}
+For the interaction with your game you will be using arrow keys on your keyboard (you can use mouse and other keys as well). Each key on your keyboard have associated ASCII code. You will be making using of these ASCII codes to check which key is pressed and will take appropriate action corresponding the pushed key. \Eg to move the board right you will check for the pressed key if the pressed key is left arrow you will move the board left (change its position). Keyboard keys are divided in two main groups: printable characters (such as a, b, tab, \etc) and non-printable ones (such as arrow keys, ctrl, \etc). Graphics library will call your corresponding registered functions whenever any printable and non-printable key from your keyboard is pressed. In the skeleton code we have registered two different functions (see below) to graphics library. These two functions are called whenever either a printable or non-printable ASCII key is pressed (see the skeleton for complete documentation). Your main tasks here  will be add all the necessary functionality needed to make the game work.
+
+\begin{cppcode}
+ /*This function is called (automatically by library) 
+ * whenever any non-printable key (such as up-arrow, 
+ * down-arraw) is pressed from the keyboard
+ * 
+ * You will have to add the necessary code here 
+ * when the arrow keys are pressed or any other key
+ * is pressed...
+ * This function has three argument variable key contains 
+ * the ASCII of the key pressed, while x and y tells the
+ * program coordinates of mouse pointer when key was
+ * pressed.
+ * */
+ void NonPrintableKeys(int key, int x, int y)
+
+ /* This function is called (automatically by library) 
+ * whenever any printable key (such as x,b, enter, etc.)
+ * is pressed from the keyboard
+ * This function has three argument variable key contains
+ * the ASCII of the key pressed, while x and y tells the
+ * program coordinates of mouse pointer when key was 
+ * pressed.
+ * */
+ void PrintableKeys(unsigned char key, int x, int y)
+ 
+\end{cppcode}
+\subsection{Collision Detection}
+% Finally, once you have done the drawing and animation of objects on your canvas. Your final goal will be to detect collisions (collision test) between objects and take necessary actions, \eg to check whether ball and a brick are colliding or not, if yes than render the brick invisible. Collision detection can be simple as well as complex. In this game, you will be first implementing a very simple procedure for finding collision between two objects. Once done, you can improve your collision detection algorithm to make your game more realistic as in video.
+% 
+% The simplest way to find collision between a sphere (ball) and a rectangle (board or bricks) consists of two steps. In the first step we find the enclosing square of the ball -- How ?. Now once we have found the bounding square of the ball, the problem of collision detection between ball and board (or bricks) can be treated as finding collision between two rectangles.
+% 
+% \subsubsection{Collision Test}
+% Finding collision between rectangles is extremely simple. Given two rectangles $A$ and $B$ defined by their centers and half-extents (half width, half height) -- \cf \figref{bounding-aabb}, their overlap can be determined quite simply by checking whether both the rectangles are overlapping in both x and y dimensions or not \ie $overlap = D.x  < 0 \&\& D.y < 0 $, where 
+% \begin{multline}
+%   \mathbf{D} = |centerB-centerA| – (halfExtentsA+halfExtentsB) \\
+%   \mbox{Specifically,}\\
+%   D.x = |centerB.x - centerA.x| - (halfWidthA +halfWidthB) \\
+%   D.y = |centerB.y - centerA.y| - (halfHeightA +halfHeightB) \\
+% \end{multline}
+% \begin{figure}[htbp!]
+% \centering
+%  \includegraphics[width=0.75\textwidth]{figures/bounding-aabb}
+%  \caption{Illustration of two rectangles.}
+%  \label{figure:bounding-aabb}
+%  \end{figure}
+% \subsubsection{Penetration Vector}
+% Collision test only tells us whether two objects are colliding are not, however in different scenarios we are required to resolve the collision \ie move the objects such that their boundaries are only touching each other. So in addition of collision test, we look for a penetration vector which can tell us the level of penetration and direction of penetration of the object. Thus given a penetration vector \vP, a colliding object can be moved in the direction opposite to \vP by its magnitude to resolve the collision.
+% 
+% Once we have found that there is a collision, we can resolve it using penetration vector \vP. \vP direction $\Theta_{\vP}$ will be the axis where there will be minimum overlap and the magnitude $||\vP||$ will be simply the value of overlap \ie $||\vP||= \min(D.x, D.y)$. So we will move the object by $||\vP||$ in the direction  -$\Theta_{\vP}$ to resolve the collision.
+% 
+
+% 
+% % \begin{code}
+% \begin{minted}[linenos,
+%                numbersep=8pt,
+%                frame=lines,
+%                framesep=2mm,
+%                bgcolor=bg]{bash}
+% sudo apt-get install freeglut3-dev glew-utils libglew1.6-dev libfreeimage-dev
+% \end{minted}
+% to install the required dependencies for our OpenGL homeworks. If libglew1.6-dev cannot be found, try installing an older version, such as libglew1.5-dev. Also make sure your package manager is up to date.
+% \\\\
+% To compile, finally run make inside the homework directory. If you do not have make or g++, run:
+% % \begin{code}
+% \begin{minted}
+% sudo apt-get install build-essential
+% \end{minted}
+% % \end{code}
+% on your synaptic-based Linux to install them.
+% \\\\
+% If you have compile errors from ``usleep'' not being in scope, try including the system file unistd.h in the includes for grader.h.
+% \\\\
+% If you cannot get the pillars to display (the teapot works fine) in homework 0, and you've tried everything else (update the drivers etc.), you will need additional patch so contact me. Essentially, replace the pillar drawing routine with old-style OpenGL.  
+% \\\\
+% If you get a segmentation fault when saving the image, try adding glPixelStorei(GL\_PACK\_ALIGNMENT, 1); right before the glReadPixels call in saveScreenshot(). 
+% 
+% 
+% \section{Solving problems on Windows}
+% \textbf{The instructions below apply only to students who cannot get the skeleton code to compile directly; most people will not need them.}\\
+% \textit{(Only) if you run into issues with 32/64-bit compilation, make sure your platform target in visual studio says Win32, rather than x64.}
+% \\ For other problems download Additional\_Libraries.zip from the slate.
+% \\
+% To import the required dependencies, copy from Additional\_Libraries.zip:
+% 
+% Help solve issues as well. Finally, open the .sln file.
+% 
+% The FreeImage Library .DLL is included with the Windows distribution. If you change your build configuration from ``Debug'' to ``Release'', you must copy ``FreeImage.dll'' to the ``Release'' directory that resides in the project root directory containing the .SLN file.
+% 
+% You may need to modify your project property sheet in VS2010 or earlier (although our tests indicate it is not required in VS 2008). This is not required in VS 2012, and for this reason we recommend you upgrade using the above free links. Before trying the fix below, some people have reported that they needed to change the PlatformToolset to V100 from V110 (and that this was sufficient). To do so, in VS 2010, go to Project Properties $\rightarrow$ Configuration Properties $\rightarrow$ General $\rightarrow$ Platform Toolset field, and revert it to V100. If that works, great; if it doesn't solve the problem, read on. Changing the project property sheet can be done by the following steps:
+% 
+% Turn on Property Manager Box by clicking ``View''$\rightarrow$``Property Manager''
+% Right click on any debug configuration in the Property Manager and select ``Add New Project Property Sheet''
+% You should save this sheet in a general folder because for next projects, you can just add the sheet you already created.
+% Open the newly created sheet by double click on it. The Property Page will appear.
+% Under C/C++ $\rightarrow$ General, click on Additional Include Directories$\rightarrow$Edit
+% Add the link to the Include folder in the Additional Include Directories form $\rightarrow$ OK
+% 
+% \textbf{If you are still having issues, update your drivers. If it still does not work look for different OS, or VS version.}
+\section{Ghost Behaviour}
+For complete details on how the ghost behave and how to make them intelligent read the following webpage: \url{http://gameinternals.com/post/2072558330/understanding-pac-man-ghost-behavior}
+
+\end{document}
+
+
